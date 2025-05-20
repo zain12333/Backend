@@ -15,6 +15,7 @@ try {
          success: true,
          userData:{
             name: user.name,
+            email: user.email, // ensure email is included
             isAccountverified: user.isAccountverified,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt

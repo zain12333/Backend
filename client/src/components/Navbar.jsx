@@ -13,7 +13,7 @@ const Navbar = () => {
   const sendverificationotp = async () => {
     try {
       axios.defaults.withCredentials = true;
-      const {data} = await axios.post(backendurl + '/api/auth/send-verify-otp', { email: userData.email });
+      const {data} = await axios.post(backendurl + '/api/auth/send-verify-otp', { email: userData.email});
 
       if (data.success) {
         toast.success('Verification OTP sent to your email');

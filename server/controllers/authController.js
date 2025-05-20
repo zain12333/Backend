@@ -108,27 +108,28 @@ export const logout = async (req, res) => {
 // this is for sending the otp to the user email
 export const sendVerifyotp = async (req, res) => {
     try {
+        // Only use email from req.body, ignore other fields
         const { email } = req.body;
-
+        if (!email) {
+            return res.json({ success: false, message: 'Email is required' });
+        }
         const user = await userModel.findOne({ email });
-
+        if (!user) {
+            return res.json({ success: false, message: 'User not found' });
+        }
         if (user.isAccountverified) {
             return res.json({ success: false, message: 'Account already verified' });
         }
-
         const otp = String(Math.floor(100000 + Math.random() * 900000));
-
         user.verifyotp = otp;
         user.verifyotpExpireAt = Date.now() + 5 * 60 * 1000; // 5 minutes
         await user.save();
-
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
             to: user.email,
             subject: 'Verify your account OTP',
             text: `Your verification OTP is ${otp}.`,
         };
-
         await transporter.sendMail(mailOptions);
         res.json({ success: true, message: 'Verification OTP sent to your email' });
     } catch (error) {

@@ -12,14 +12,15 @@ const Login = () => {
   const navigate = useNavigate();
   const { backendurl, setIsLoggedin, getuserData, userData } = useContext(AppContext);
 
-  const [state, setState] = useState('Sign Up');
+  const [state, setState] = useState('Login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onsubmitHandler = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
 
       if (state === 'Sign Up') {
@@ -58,6 +59,8 @@ const Login = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -126,9 +129,10 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full py-2.5 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-900 text-white font-medium"
+            className="w-full py-2.5 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-900 text-white font-medium disabled:opacity-60"
+            disabled={loading}
           >
-            {state}
+            {loading ? 'Loading...' : state}
           </button>
         </form>
 
