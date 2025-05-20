@@ -5,11 +5,12 @@ import { assets } from '../assets/assets';
 import { AppContext} from '../context/Appcontext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import axiosPublic from '../utils/axiosPublic';
 
 
 const Login = () => {
   const navigate = useNavigate();
-  const { backendurl, setIsLoggedin,  getuserData } = useContext(AppContext);
+  const { backendurl, setIsLoggedin, getuserData, userData } = useContext(AppContext);
 
   const [state, setState] = useState('Sign Up');
   const [name, setName] = useState('');
@@ -28,7 +29,7 @@ const Login = () => {
           password,
       });
 
-        if (data.status === 'success') {
+        if (data.success) {
           alert('Account Created Successfully');
           setIsLoggedin(true);
           getuserData();
@@ -37,18 +38,18 @@ const Login = () => {
           toast.error(data.message);
         }
       } else {
-        const { data , response } = await axios.post(`${backendurl}/api/auth/login`, {
+        const { data } = await axiosPublic.post(`${backendurl}/api/auth/login`, {
           email,
           password,
-        });
+        },{ withCredentials: true } 
+      );
 
-        console.log(data , 'data' , response , 'response');
-
-        if (data.status === 'success') {
+        if (data.success) {
         toast.success('Logged in Successfully');
         setIsLoggedin(true);
-        
+        console.log(userData , 'userData')
         getuserData(); 
+        console.log(userData , 'userData')
         // Wait for state to update, then navigate
         navigate('/');
       } else {
