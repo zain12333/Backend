@@ -8,7 +8,32 @@ import { toast } from 'react-toastify'
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { userData, setUserData, setIsLoggedin,Backendurl } = useContext(AppContext);
+  const { userData, setUserData, setIsLoggedin, backendurl } = useContext(AppContext);
+
+  const sendverificationotp = async () => {
+    try {
+      axios.defaults.withCredentials = true;
+      const {data} = await axios.post(backendurl + '/api/auth/send-verify-otp', { email: userData.email });
+
+      if (data.success) {
+        toast.success('Verification OTP sent to your email');
+        navigate('/Email-verify');
+      } else {
+        toast.error(data.message);
+      }
+
+    }catch (error) {  
+      toast.error(error.message);
+    }
+
+
+
+  }
+
+
+
+
+
   // Check if userData exists and isAccountVerified is true
   // If not verified, show "VerifyEmail" option
   
@@ -17,10 +42,10 @@ const Navbar = () => {
       axios.defaults.withCredentials = true;
 
       
-      const {data} = await axios.post(Backendurl + '/api/auth/logout');
+      const {data} = await axios.post(backendurl + '/api/auth/logout');
          data.success && setIsLoggedin(false);
          data.success && setUserData(false);
-         navigate('/login');
+         navigate('/');
     }catch (error) {
       toast.error(error.message);
     }
@@ -37,8 +62,8 @@ const Navbar = () => {
           {userData.name[0].toUpperCase()}
           <div className='absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-10'>
             <ul className='list-none m-0 p-2 bg-gray-100 text-sm'>
-              {!userData.isAccountVerified && (
-                <li className='py-1 px-2 hover:bg-gray-200 cursor-pointer'>
+              {!userData.isAccountverified && (
+                <li onClick={sendverificationotp} className='py-1 px-2 hover:bg-gray-200 cursor-pointer'>
                   VerifyAccount
                 </li>
               )}
